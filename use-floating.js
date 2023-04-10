@@ -6,6 +6,7 @@ import {
   offset,
   autoUpdate,
   inline,
+  size,
 } from "@floating-ui/dom";
 
 let defaultStyle = {
@@ -15,17 +16,6 @@ let defaultStyle = {
   left: 0,
 };
 
-let resizeFloatToReferenceWidth = {
-  name: "resizeFloatToReferenceWidth",
-  fn({ elements }) {
-    return {
-      data: {
-        width: elements.reference.offsetWidth,
-      },
-    };
-  },
-};
-
 export default function useFloating(opts) {
   let options = {
     placement: "bottom-start",
@@ -33,6 +23,7 @@ export default function useFloating(opts) {
     offsetY: 0,
     flip: false,
     autoPlacement: false,
+    inline: false,
     ...opts,
   };
 
@@ -80,7 +71,7 @@ export default function useFloating(opts) {
   };
 
   let setAutoUpdateFloating = () => {
-    if (!reference.value || !floating.value) return;
+    if (!floating.value) return;
 
     destroyFloating = autoUpdate(
       localReference.value,
@@ -90,9 +81,9 @@ export default function useFloating(opts) {
   };
 
   let updateFloating = async () => {
-    if (!reference.value || !floating.value) return;
+    if (!floating.value) return;
 
-    let { x, y, middlewareData } = await computePosition(
+    let { x, y, placement } = await computePosition(
       localReference.value,
       floating.value,
       {
@@ -105,7 +96,13 @@ export default function useFloating(opts) {
           unref(options.inline) && inline(),
           unref(options.flip) && flip(),
           unref(options.autoPlacement) && autoPlacement(),
-          unref(options.resize) && resizeFloatToReferenceWidth,
+          unref(options.resize) && size({
+            apply({rects}) {
+              Object.assign(floating.value.style, {
+                width: `${rects.reference.width}px`,
+              })
+            }
+          })
         ],
       }
     );
@@ -116,11 +113,8 @@ export default function useFloating(opts) {
       left: `${x}px`,
       top: `${y}px`,
     });
-    if (middlewareData.resizeFloatToReferenceWidth) {
-      Object.assign(floating.value.style, {
-        width: `${middlewareData.resizeFloatToReferenceWidth.width}px`,
-      });
-    }
+
+    floating.value.dataset.placement = placement.split("-")[0]
   };
 
   let watchableOptions = Object.values(options).filter((i) => isRef(i));
