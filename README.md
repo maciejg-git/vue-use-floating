@@ -2,7 +2,7 @@
 
 Light composable function for Vue 3 and FloatingUI.
 
-[Example](https://vue-use-floating.stackblitz.io)
+[Example](https://stackblitz.com/edit/vue-use-floating?file=src%2FApp.vue)
 
 # Usage:
 
