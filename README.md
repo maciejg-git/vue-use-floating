@@ -1,6 +1,6 @@
 # vue-use-floating
 
-Light composable function for Vue 3 and FloatingUI.
+Light Vue 3 composable function to position elements like dropdown, popovers and tooltips. It uses FloatingUI to calculate element positions.
 
 [Example](https://stackblitz.com/edit/vue-use-floating?file=src%2FApp.vue)
 
